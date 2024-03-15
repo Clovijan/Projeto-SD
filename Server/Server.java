@@ -44,6 +44,7 @@ public class Server {
 
                     System.out.println("Lista de arquivos enviada a todos os clientes.");
                 }
+                serverSocket.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
