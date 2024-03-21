@@ -36,6 +36,10 @@ Este projeto está licenciado sob a [MIT License](LICENSE).
 
 *Este README é apenas um exemplo. Sinta-se à vontade para modificá-lo conforme necessário para o seu projeto.*
 
+## Requisitos
+1. Servidor arguandando Solicitação.
+2. Criar uma lista com o endereço de cada pc e os arquivos q ele possui.
+3. Caso o clinte queira o arquivo ele vai pedir permissão para o endereço que possui o arquivo caso ele libere já envia o arquivo junto.
 
 
 
