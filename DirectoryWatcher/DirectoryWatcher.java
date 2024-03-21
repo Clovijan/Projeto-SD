@@ -2,19 +2,25 @@ package DirectoryWatcher;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DirectoryWatcher {
     public static void main(String[] args) throws IOException, InterruptedException {
         // Diretório que será monitorado
-        Path directory = Paths.get("C:/Users/Magda");
+        
 
+    //    public void monitoraDiretorio(){
         try {
+            List<Path> itensCriados = new ArrayList<>();
+            Path directory = Paths.get("C:/Users/gildo");
             WatchService watchService = FileSystems.getDefault().newWatchService();
             directory.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 
@@ -38,6 +44,11 @@ public class DirectoryWatcher {
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;
                     Path filename = ev.context();
                     Path child = directory.resolve(filename);
+                  
+
+                    itensCriados.add(child);
+                    // System.out.println(kind + ": " + child);
+                    System.out.println(itensCriados);
 
                     if (kind == ENTRY_CREATE) {
                         System.out.println(child + " criado.");
@@ -56,6 +67,7 @@ public class DirectoryWatcher {
         } catch (IOException ex) {
             System.err.println("IOException: " + ex.getMessage());
         }
+    //    }
     }
 }
 

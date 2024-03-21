@@ -3,6 +3,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import DirectoryWatcher.DirectoryWatcher;
+
 public class Client {
     public static void main(String[] args) {
         try {
@@ -11,8 +13,13 @@ public class Client {
             clientSocket.setBroadcast(true);
 
             // Preparar a mensagem de solicitação
-            String requestMessage = "LIST_FILES";
+
+            DirectoryWatcher monitora = new DirectoryWatcher();
+            System.out.println(monitora.getClass());
+
+            String requestMessage = monitora.toString();
             byte[] requestData = requestMessage.getBytes();
+
 
             // Enviar a mensagem de broadcast para o servidor
             DatagramPacket requestPacket = new DatagramPacket(

@@ -6,10 +6,12 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import DirectoryWatcher.DirectoryWatcher;
+
 public class Server {
     private static final int PORT = 8888;
     private static List<InetAddress> clients = new ArrayList<>();
-
+    
     public static void main(String[] args) {
         try {
             DatagramSocket serverSocket = new DatagramSocket(PORT);
@@ -30,6 +32,8 @@ public class Server {
 
                     // Envia a lista de arquivos de todos os clientes conectados
                     String fileList = getAllClientsFiles();
+
+                    
                     byte[] responseData = fileList.getBytes();
 
                     for (InetAddress client : clients) {
