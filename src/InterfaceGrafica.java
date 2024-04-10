@@ -84,6 +84,15 @@ public class InterfaceGrafica extends JFrame {
                 }
             }
         });
+
+        listaArquivosSolicitados.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                String selectedFile = listaArquivosSolicitados.getSelectedValue();
+                if (selectedFile != null) {
+                    adicionarArquivoAprovado(selectedFile);
+                }
+            }
+        });
      
         botaoRede.addActionListener(new ActionListener() {
             @Override
@@ -159,6 +168,10 @@ public class InterfaceGrafica extends JFrame {
         modelListaSolicitados.addElement(nomeArquivo);
     }
 
+    private void adicionarArquivoAprovado(String nomeArquivo) {
+        modelListaLocal.addElement(nomeArquivo);
+    }
+  
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
