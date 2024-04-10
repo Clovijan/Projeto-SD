@@ -1,89 +1,170 @@
 package src;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileSystemView;
 
 public class InterfaceGrafica extends JFrame {
 
-    private JTextField textField1;
-    private JTextField textField2;
-    private JComboBox<String> fileComboBox;
+    private DefaultListModel<String> modelListaLocal;
+    private DefaultListModel<String> modelListaRede;
+    private DefaultListModel<String> modelListaSolicitados;
 
     public InterfaceGrafica() {
-        setTitle("Interface Gráfica Java");
-        setSize(600, 350);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        super("Projeto de SD - UFSDrive");
 
-        // Layout
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 600);
         setLayout(new BorderLayout());
 
-        // Painel para o topo
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout());
+        JPanel painelPrincipal = new JPanel(new GridLayout(1, 2));
 
-        // Caixa de seleção de arquivo
-        fileComboBox = new JComboBox<>();
-        fileComboBox.setPreferredSize(new Dimension(200, 30));
-        topPanel.add(fileComboBox);
-        fileComboBox.setEditable(false);
+        JPanel panelLocal = new JPanel(new BorderLayout());
+        modelListaLocal = new DefaultListModel<>();
+        JList<String> listaArquivosLocal = new JList<>(modelListaLocal);
+        JScrollPane scrollPaneLocal = new JScrollPane(listaArquivosLocal);
+        JButton botaoLocal = new JButton("Selecionar Pasta Local");
 
-        // Botão para selecionar arquivo
-        JButton selectButton = new JButton("Selecionar Arquivo");
-        selectButton.addActionListener(new ActionListener() {
+        panelLocal.add(new JLabel("Arquivos Locais", SwingConstants.CENTER), BorderLayout.NORTH);
+        panelLocal.add(scrollPaneLocal, BorderLayout.CENTER);
+        panelLocal.add(botaoLocal, BorderLayout.SOUTH);
+        
+        JPanel panelRede = new JPanel(new BorderLayout());
+        modelListaRede = new DefaultListModel<>();
+        JList<String> listaArquivosRede = new JList<>(modelListaRede);
+        JScrollPane scrollPaneRede = new JScrollPane(listaArquivosRede);
+        JButton botaoRede = new JButton("Listar Arquivos de Rede");
+ 
+        JPanel panelArquivosRede = new JPanel(new BorderLayout());
+        panelArquivosRede.add(new JLabel("Arquivos de Rede", SwingConstants.CENTER), BorderLayout.NORTH);
+        panelArquivosRede.add(scrollPaneRede, BorderLayout.CENTER);
+
+        panelRede.add(panelArquivosRede, BorderLayout.CENTER);
+
+        panelRede.add(botaoRede, BorderLayout.SOUTH);
+       
+        JPanel panelSolicitados = new JPanel(new BorderLayout());
+        modelListaSolicitados = new DefaultListModel<>();
+        JList<String> listaArquivosSolicitados = new JList<>(modelListaSolicitados);
+        JScrollPane scrollPaneSolicitados = new JScrollPane(listaArquivosSolicitados);
+
+        panelSolicitados.add(new JLabel("Arquivos Solicitados", SwingConstants.CENTER), BorderLayout.NORTH);
+        panelSolicitados.add(scrollPaneSolicitados, BorderLayout.CENTER);
+        
+        painelPrincipal.add(panelLocal);
+        painelPrincipal.add(panelRede);
+        
+        botaoLocal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(null);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    fileComboBox.addItem(selectedFile.getAbsolutePath());
+                selecionarPastaLocal();
+            }
+        });
+        
+        listaArquivosRede.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                String selectedFile = listaArquivosRede.getSelectedValue();
+                if (selectedFile != null) {
+                    adicionarArquivoSolicitado(selectedFile);
                 }
             }
         });
-        topPanel.add(selectButton);
+     
+        botaoRede.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listarArquivosDeRede();
+            }
+        });
+       
+        add(painelPrincipal, BorderLayout.CENTER);
+        add(panelSolicitados, BorderLayout.SOUTH);
+       
+        setLocationRelativeTo(null);
+    }
 
-        add(topPanel, BorderLayout.NORTH);
+    private void selecionarPastaLocal() {
+        JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnValue = fileChooser.showOpenDialog(null);
 
-        // Painel para as caixas de texto
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new FlowLayout());
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            listarArquivosLocais(selectedFile);
+        }
+    }
 
-        JLabel label2 = new JLabel("Arquivos locais:");
-        // Segunda caixa de texto
-        textField1 = new JTextField();
-        textField1.setPreferredSize(new Dimension(100, 50)); 
-        textPanel.add(label2);
-        textPanel.add(textField1);
+    private void listarArquivosLocais(File diretorio) {
+        modelListaLocal.clear();
 
-        // Caixa de texto 2
-        JLabel label3 = new JLabel("Arquivos compartilhados:");
-        textField2 = new JTextField();
-        textField2.setPreferredSize(new Dimension(100, 50)); 
-        textPanel.add(label3);
-        textPanel.add(textField2);
+        if (diretorio.exists() && diretorio.isDirectory()) {
+            File[] arquivos = diretorio.listFiles();
+            if (arquivos != null) {
+                for (File arquivo : arquivos) {
+                    modelListaLocal.addElement(arquivo.getName());
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Diretório local não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-        add(textPanel, BorderLayout.CENTER);
+    private void listarArquivosDeRede() {
+        modelListaRede.clear();
+        
+        try {
+           
+           
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        setVisible(true);
+    private void aprovarArquivosSolicitados(String pastaCompartilhada) {
+        //Percorrer lista de arquivos solicitados adicionados em modelListaSolicitados linha 158
+        try {
+            File pastaArquivo = new File(pastaCompartilhada);
+
+            if (pastaArquivo.exists() && pastaArquivo.isDirectory()) {
+                File[] arquivos = pastaArquivo.listFiles();
+                if (modelListaSolicitados != null) {
+                    for (File arquivo : arquivos) {
+                        modelListaLocal.addElement(" - " + arquivo.getName());
+                    }
+                }
+            } else {
+                System.out.println("Compartilhamento não encontrado ou não é um diretório válido.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void adicionarArquivoSolicitado(String nomeArquivo) {
+        modelListaSolicitados.addElement(nomeArquivo);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new InterfaceGrafica();
+                InterfaceGrafica interfaceGrafica = new InterfaceGrafica();
+                interfaceGrafica.setVisible(true);
             }
         });
     }
