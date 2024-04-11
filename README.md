@@ -28,6 +28,14 @@ Este é um projeto de servidor de compartilhamento de arquivos desenvolvido em J
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests para melhorias, correções de bugs ou novas funcionalidades.
 
+## Desenvolvimento (Passo a Passo)
+
+1. Criar um método que monitora uma pasta de compartilhada de arquivos;
+2. Criar um servidor que envie na rede todas as mudanças desta pasta;
+3. Criar um Método que receba esta mensagem a guarde em array;
+4. Criar um método que envia resposta para o servidor dizendo se quer ou não o arquivo;
+5. Criar um método que envie este arquivo para o outro servidor;
+
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
