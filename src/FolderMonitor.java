@@ -123,6 +123,7 @@ public class FolderMonitor extends Thread{
         Path directory = Paths.get(FOLDERPATHMONITOR);
         Path directoryList = Paths.get(FOLDERLISTFILE);
         Path directList = Paths.get(LISTFILE);
+        Path directoryRec = Paths.get(FOLDERPATHMONITOR+"/recebido");
 
         if(!Files.exists(directoryList)){
             try{
@@ -137,6 +138,15 @@ public class FolderMonitor extends Thread{
             try{
                 Files.createDirectories(directory);
                 System.out.println("Pasta da Lista de arquivos criada com Sucesso!");
+            }catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+        if(!Files.exists(directoryRec)){
+            try{
+                Files.createDirectories(directoryRec);
+                System.out.println("Pasta de Recebido criada com Sucesso!");
             }catch(Exception e){
                 e.printStackTrace();
                 return null;
