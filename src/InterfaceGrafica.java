@@ -1,5 +1,3 @@
-package src;
-
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -23,12 +21,15 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileSystemView;
 
+import Cliente.Client;
+
 public class InterfaceGrafica extends JFrame {
 
     private DefaultListModel<String> modelListaLocal;
     private DefaultListModel<String> modelListaRede;
     private DefaultListModel<String> modelListaSolicitados;
     private Map<String, String> arquivosSolicitadosMap;
+    Client clientList = new Client();
 
     public InterfaceGrafica() {
         super("Projeto de SD - UFSDrive");
@@ -106,6 +107,7 @@ public class InterfaceGrafica extends JFrame {
         botaoRede.addActionListener(new ActionListener() {            @Override
             public void actionPerformed(ActionEvent e) {
                 listarArquivosDeRede();
+               
             }
         });       
         add(painelPrincipal, BorderLayout.CENTER);
@@ -140,23 +142,42 @@ public class InterfaceGrafica extends JFrame {
     }
 
     private void listarArquivosDeRede() {
-        modelListaRede.clear();
-        
-        try {
-            // arquivos falsos para testar
-            //clicar nesses arquivos. Serão adicionados na tela de solicitações
-            List<String> arquivosRede = new ArrayList<>();
-            arquivosRede.add("Arquivo1.txt");
-            arquivosRede.add("Arquivo2.pdf");
-            arquivosRede.add("Arquivo3.docx");
+         modelListaRede.clear();
+       
+         try {
+             // arquivos falsos para testar
+             //clicar nesses arquivos. Serão adicionados na tela de solicitações
+             List<String> arquivosRede = new ArrayList<>();
+             arquivosRede.add(clientList.toString());
+             arquivosRede.add("Arquivo2.pdf");
+            //  arquivosRede.add("Arquivo3.docx");
 
-            for (String arquivo : arquivosRede) {
-                modelListaRede.addElement(arquivo);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+             for (String arquivo : arquivosRede) {
+                 modelListaRede.addElement(arquivo);
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+
+    // private void listarArquivosDeRede() {
+    //     modelListaRede.clear();
+        
+    //     try {
+    //         // arquivos falsos para testar
+    //         //clicar nesses arquivos. Serão adicionados na tela de solicitações
+    //         List<String> arquivosRede = new ArrayList<>();
+    //         arquivosRede.add("Arquivo1.txt");
+    //         arquivosRede.add("Arquivo2.pdf");
+    //         arquivosRede.add("Arquivo3.docx");
+
+    //         for (String arquivo : arquivosRede) {
+    //             modelListaRede.addElement(arquivo);
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     private void adicionarArquivoSolicitado(String nomeArquivo) {
         String pathArquivo = "C:\\Users\\Magda\\Projeto-SD" + nomeArquivo; // Substituir pelo caminho real do arquivo da rede
