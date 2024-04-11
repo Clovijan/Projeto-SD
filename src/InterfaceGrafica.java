@@ -5,6 +5,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -24,6 +28,7 @@ public class InterfaceGrafica extends JFrame {
     private DefaultListModel<String> modelListaLocal;
     private DefaultListModel<String> modelListaRede;
     private DefaultListModel<String> modelListaSolicitados;
+    private Map<String, String> arquivosSolicitadosMap;
 
     public InterfaceGrafica() {
         super("Projeto de SD - UFSDrive");
@@ -31,6 +36,9 @@ public class InterfaceGrafica extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLayout(new BorderLayout());
+
+        // Inicializa o mapa de arquivos solicitados
+        arquivosSolicitadosMap = new HashMap<>();
 
         JPanel painelPrincipal = new JPanel(new GridLayout(1, 2));
 
@@ -68,7 +76,7 @@ public class InterfaceGrafica extends JFrame {
         
         painelPrincipal.add(panelLocal);
         painelPrincipal.add(panelRede);
-        
+
         botaoLocal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -84,17 +92,24 @@ public class InterfaceGrafica extends JFrame {
                 }
             }
         });
+
+        // Adicionar ação ao selecionar um arquivo solicitado
+        listaArquivosSolicitados.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                String selectedFile = listaArquivosSolicitados.getSelectedValue();
+                if (selectedFile != null) {
+                    liberarArquivoSolicitado(selectedFile);
+                }
+            }
+        });
      
-        botaoRede.addActionListener(new ActionListener() {
-            @Override
+        botaoRede.addActionListener(new ActionListener() {            @Override
             public void actionPerformed(ActionEvent e) {
                 listarArquivosDeRede();
             }
-        });
-       
+        });       
         add(painelPrincipal, BorderLayout.CENTER);
-        add(panelSolicitados, BorderLayout.SOUTH);
-       
+        add(panelSolicitados, BorderLayout.SOUTH);       
         setLocationRelativeTo(null);
     }
 
@@ -128,27 +143,15 @@ public class InterfaceGrafica extends JFrame {
         modelListaRede.clear();
         
         try {
-           
-           
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+            // arquivos falsos para testar
+            //clicar nesses arquivos. Serão adicionados na tela de solicitações
+            List<String> arquivosRede = new ArrayList<>();
+            arquivosRede.add("Arquivo1.txt");
+            arquivosRede.add("Arquivo2.pdf");
+            arquivosRede.add("Arquivo3.docx");
 
-    private void aprovarArquivosSolicitados(String pastaCompartilhada) {
-        //Percorrer lista de arquivos solicitados adicionados em modelListaSolicitados linha 158
-        try {
-            File pastaArquivo = new File(pastaCompartilhada);
-
-            if (pastaArquivo.exists() && pastaArquivo.isDirectory()) {
-                File[] arquivos = pastaArquivo.listFiles();
-                if (modelListaSolicitados != null) {
-                    for (File arquivo : arquivos) {
-                        modelListaLocal.addElement(" - " + arquivo.getName());
-                    }
-                }
-            } else {
-                System.out.println("Compartilhamento não encontrado ou não é um diretório válido.");
+            for (String arquivo : arquivosRede) {
+                modelListaRede.addElement(arquivo);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,9 +159,34 @@ public class InterfaceGrafica extends JFrame {
     }
 
     private void adicionarArquivoSolicitado(String nomeArquivo) {
+        String pathArquivo = "C:\\Users\\Magda\\Projeto-SD" + nomeArquivo; // Substituir pelo caminho real do arquivo da rede
+        arquivosSolicitadosMap.put(nomeArquivo, pathArquivo);
         modelListaSolicitados.addElement(nomeArquivo);
     }
 
+    //Para liberar arquivo, basta clicar no mesmo
+    private void liberarArquivoSolicitado(String nomeArquivo) {
+        int opcao = JOptionPane.showConfirmDialog(null, "Deseja liberar o arquivo '" + nomeArquivo + "' para download?", "Confirmação", JOptionPane.YES_NO_OPTION);
+        if (opcao == JOptionPane.YES_OPTION) {
+            //antes de liberar o arquivo, tem que verificar se é o proprietário do mesmo. Falta implementar isso
+            String pathArquivo = arquivosSolicitadosMap.get(nomeArquivo);
+            if (pathArquivo != null) {
+                salvarArquivoLocal(pathArquivo);
+                arquivosSolicitadosMap.remove(nomeArquivo);
+                modelListaSolicitados.removeElement(nomeArquivo);
+                JOptionPane.showMessageDialog(null, "Arquivo '" + nomeArquivo + "' baixado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao baixar o arquivo '" + nomeArquivo + "'.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void salvarArquivoLocal(String pathArquivo) {
+        // Implementar o código para realizar download do arquivo localmente
+        System.out.println("Arquivo baixado em: " + pathArquivo);
+    }
+
+  
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
